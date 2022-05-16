@@ -19,7 +19,7 @@ const Chat = () => {
   const location = useLocation();
   useEffect(() => {
     const { name, room } = queryString.parse(location.search);
-    socket = io("http://localhost:5000");
+    socket = io("https://iskylar-chat.herokuapp.com/");
     setName(name);
     setRoom(room);
     console.log(socket);
