@@ -1,11 +1,18 @@
 const http = require('http');
 const cors = require('cors');
+const path = require("path");
 const express = require('express');
 const socketio = require('socket.io');
  const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
  const router = require('./router');
  const app = express();
  const server = http.createServer(app);
+
+ // Config
+if (process.env.NODE_ENV !== "PRODUCTION") {
+  require("dotenv").config({ path: "server/config/config.env" });
+}
+
  const io = socketio(server,{
   cors: {
     origin: "http://localhost:3000",
@@ -13,7 +20,7 @@ const socketio = require('socket.io');
 });  
 
 app.use(cors());
-app.use(router);
+// app.use(router);
 
 io.on("connection",(socket)=>{
  
@@ -47,8 +54,10 @@ io.on("connection",(socket)=>{
   })
 }) 
 
+app.use(express.static(path.resolve(__dirname, "./client/build")));
 
-
-
+app.get("/*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./client/build/index.html"));
+});
 
 server.listen(process.env.PORT || 5000, () => console.log(`Server has started.`));
